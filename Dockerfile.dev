@@ -1,0 +1,25 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# OPTIMIZATION: Install pnpm globally first (cached separately)
+RUN npm install -g pnpm
+
+# OPTIMIZATION: Copy only package files first for dependency caching
+# This layer is cached unless package.json or pnpm-lock.yaml changes
+COPY package.json pnpm-lock.yaml* ./
+
+# OPTIMIZATION: Use BuildKit cache mounts for pnpm store
+# This caches downloaded packages across builds
+# Enable with: DOCKER_BUILDKIT=1 docker compose build
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install
+
+# Copy app files (this layer changes frequently, so it's last)
+COPY . .
+
+# Expose port
+EXPOSE 5173
+
+# Start development server
+CMD ["pnpm", "dev"]

@@ -1,0 +1,11 @@
+1. We get a .glb asset from React Bits. Which is a 3d card asset with a png mapped a ssurface img. That 3d file can be open with blender.
+
+2. We open and edit that file with https://threejs.org/editor/ for simplicity.
+
+3. First go to Add on top left menu and add lights as this don't have that it's added futher as setted in React Bits I guess.
+
+4. Now we can see the img in Asset.
+
+5. Double click on card. And on the Scene section on right go to Meterial Tab. There we find a map, just double click on it and upload new edited png.
+
+note: i have lanyard-overlay.xcf as i edited/made the png on GIMP.
