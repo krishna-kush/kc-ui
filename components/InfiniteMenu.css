@@ -24,7 +24,7 @@
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  border: 5px solid var(--menu-text-color, #000);
+  border: 5px solid var(--action-border-color, #000);
 }
 
 .face-title {
@@ -34,14 +34,15 @@
   font-size: 4rem;
   left: 1.6em;
   top: 50%;
-color: var(--menu-text-color, #fff);}
+  color: var(--menu-title-color, #fff);
+}
 
 .action-button-icon {
   user-select: none;
   position: relative;
   top: 2px;
   font-size: 26px;
-  color: var(--menu-text-color, #060010);
+  color: var(--action-border-color, #060010);
 }
 
 .face-title {
@@ -71,7 +72,8 @@ color: var(--menu-text-color, #fff);}
   font-size: 1.5rem;
   right: 1%;
   transform: translate(0, -50%);
-color: var(--menu-text-color, #fff);}
+  color: var(--menu-desc-color, #fff);
+}
 
 .face-description.active {
   opacity: 1;

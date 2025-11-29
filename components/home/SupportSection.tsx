@@ -211,7 +211,7 @@ export default function SupportSection() {
           style={{ height: '600px', position: 'relative' }}
         >
           <InfiniteMenu items={cpuArchitectures} backgroundColor="var(--background)" 
-  textColor="var(--foreground)" actionColor="var(--secondary)"/>
+  titleColor="var(--foreground)" descColor="var(--foreground)" actionColor="var(--secondary)" actionBorderColor="var(--foreground)"/>
         </motion.div>
       </div>
     </section>

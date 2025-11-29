@@ -1076,15 +1076,19 @@ const defaultItems: MenuItem[] = [
 interface InfiniteMenuProps {
   items?: MenuItem[];
   backgroundColor?: string;
-  textColor?: string;
+  titleColor?: string;
+  descColor?: string;
   actionColor?: string;
+  actionBorderColor?: string;
 }
 
 const InfiniteMenu: FC<InfiniteMenuProps> = ({ 
   items = [], 
   backgroundColor = '#000000', 
-  textColor = '#ffffff',
-  actionColor = 'cyan'
+  titleColor = '#ffffff',
+  descColor = '#ffffff',
+  actionColor = 'cyan',
+  actionBorderColor = '#000000'
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null) as MutableRefObject<HTMLCanvasElement | null>;
   const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
@@ -1146,8 +1150,10 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({
         width: '100%', 
         height: '100%',
         // Define CSS Variables here to penetrate the CSS file
-        ['--menu-text-color' as any]: textColor,
+        ['--menu-title-color' as any]: titleColor,
+        ['--menu-desc-color' as any]: descColor,
         ['--action-button-bg' as any]: actionColor,
+        ['--action-border-color' as any]: actionBorderColor,
         background: backgroundColor,
       }}
     >
