@@ -30,6 +30,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface LicenseListItem {
   license_id: string;
@@ -44,10 +54,15 @@ interface LicenseListItem {
   revoked: boolean;
   unique_computers: number;
   verification_count: number;
+  size?: number;
 }
+
+import { formatBytes } from "@/lib/utils";
 
 export default function LicensesPage() {
   const router = useRouter();
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorDialogContent, setErrorDialogContent] = useState({ title: "", description: "" });
   const { addNotification } = useNotifications();
   const [licenses, setLicenses] = useState<LicenseListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -262,6 +277,7 @@ export default function LicensesPage() {
                         >
                           Created{getSortIcon("created")}
                         </TableHead>
+                        <TableHead>Size</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -298,6 +314,9 @@ export default function LicensesPage() {
                               {formatDistanceToNow(new Date(license.created_at), { addSuffix: true })}
                             </span>
                           </TableCell>
+                          <TableCell className="font-mono text-xs">
+                            {license.size ? formatBytes(license.size) : "-"}
+                          </TableCell>
                           <TableCell className="text-right cursor-auto" onClick={(e) => e.stopPropagation()}>
                             <div className="flex justify-end gap-2">
                               <Button
@@ -318,8 +337,18 @@ export default function LicensesPage() {
                                     document.body.removeChild(link);
                                     window.URL.revokeObjectURL(url);
                                     toast.success(`Downloaded successfully`, { id: toastId });
-                                  } catch (error) {
-                                    toast.error("Failed to download", { id: toastId });
+                                  } catch (error: any) {
+                                    console.error("Download error:", error);
+                                    if (error.message && (error.message.includes("Storage quota exceeded") || error.message.includes("not enough space"))) {
+                                      toast.dismiss(toastId);
+                                      setErrorDialogContent({
+                                        title: "Download Failed: Storage Quota Exceeded",
+                                        description: error.message
+                                      });
+                                      setErrorDialogOpen(true);
+                                    } else {
+                                      toast.error(error.message || "Failed to download", { id: toastId });
+                                    }
                                   }
                                 }}
                                 disabled={license.revoked}
@@ -472,6 +501,20 @@ export default function LicensesPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-destructive">{errorDialogContent.title}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {errorDialogContent.description}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>OK</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </NavigationLayout>
     </ProtectedRoute>
   );

@@ -6,3 +6,4 @@ export { binaryApi } from "./binary";
 export { licenseApi } from "./license";
 export { notificationApi } from "./notification";
 export { statsApi, telemetryApi, type AnalyticsData } from "./stats";
+export { settingsApi, type StorageStats, type CleanupRecommendations } from "./settings";

@@ -24,6 +24,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface License {
   license_id: string;
@@ -80,6 +90,8 @@ export default function LicenseStatsPage() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorDialogContent, setErrorDialogContent] = useState({ title: "", description: "" });
 
   useEffect(() => {
     loadStats();
@@ -134,8 +146,18 @@ export default function LicenseStatsPage() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       toast.success(`Downloaded successfully`, { id: toastId });
-    } catch (error) {
-      toast.error("Failed to download", { id: toastId });
+    } catch (error: any) {
+      console.error("Download error:", error);
+      if (error.message && (error.message.includes("Storage quota exceeded") || error.message.includes("not enough space"))) {
+        toast.dismiss(toastId);
+        setErrorDialogContent({
+          title: "Download Failed: Storage Quota Exceeded",
+          description: error.message
+        });
+        setErrorDialogOpen(true);
+      } else {
+        toast.error(error.message || "Failed to download", { id: toastId });
+      }
     }
   };
 
@@ -426,6 +448,20 @@ export default function LicenseStatsPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-destructive">{errorDialogContent.title}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {errorDialogContent.description}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>OK</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </NavigationLayout>
     </ProtectedRoute>

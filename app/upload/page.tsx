@@ -6,6 +6,7 @@ import { NavigationLayout } from "@/components/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload as UploadIcon, FileCode2, X } from "lucide-react";
@@ -20,6 +21,7 @@ export default function UploadPage() {
   const { user } = useAuth();
   const { addNotification } = useNotifications();
   const [file, setFile] = useState<File | null>(null);
+  const [filename, setFilename] = useState("");
   const [description, setDescription] = useState("");
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -40,13 +42,17 @@ export default function UploadPage() {
     setDragActive(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
+      const droppedFile = e.dataTransfer.files[0];
+      setFile(droppedFile);
+      setFilename(droppedFile.name);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      setFilename(selectedFile.name);
     }
   };
 
@@ -58,10 +64,15 @@ export default function UploadPage() {
       return;
     }
 
+    if (!filename.trim()) {
+      toast.error("Please enter a filename");
+      return;
+    }
+
     setUploading(true);
 
     try {
-      const data = await binaryApi.upload(file, description);
+      const data = await binaryApi.upload(file, description, filename);
       
       toast.success("Binary uploaded successfully!");
       
@@ -136,7 +147,11 @@ export default function UploadPage() {
                             type="button"
                             variant="ghost"
                             size="sm"
-                            onClick={() => setFile(null)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setFile(null);
+                              setFilename("");
+                            }}
                           >
                             <X className="h-4 w-4" />
                           </Button>
@@ -167,6 +182,21 @@ export default function UploadPage() {
                       />
                     </div>
                   </div>
+
+                  {file && (
+                    <div className="space-y-2">
+                      <Label htmlFor="filename">Filename</Label>
+                      <Input
+                        id="filename"
+                        placeholder="binary_name.exe"
+                        value={filename}
+                        onChange={(e) => setFilename(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        You can rename the file before uploading.
+                      </p>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="description">Description (optional)</Label>

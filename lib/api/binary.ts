@@ -18,9 +18,9 @@ export const binaryApi = {
     return response.data;
   },
 
-  upload: async (file: File, description?: string) => {
+  upload: async (file: File, description?: string, filename?: string) => {
     const formData = new FormData();
-    formData.append("binary", file);
+    formData.append("binary", file, filename || file.name);
     if (description) {
       formData.append("description", description);
     }
@@ -65,7 +65,8 @@ export const binaryApi = {
     });
 
     if (!response.ok) {
-      throw new Error('Download failed');
+      const errorText = await response.text();
+      throw new Error(errorText || 'Download failed');
     }
 
     return response.blob();
