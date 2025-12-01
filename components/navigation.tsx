@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { NotificationDropdown } from "@/components/notification-dropdown";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { motion, AnimatePresence } from "framer-motion";
 
 import GlitchText from "@/components/GlitchText";
 
@@ -66,7 +67,7 @@ export function AppSidebar() {
   const { user, logout } = useAuth();
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(true);
 
   useEffect(() => {
     setMounted(true);
@@ -85,9 +86,9 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center gap-3 px-4 py-4 mb-8 text-foreground cursor-pointer hover:opacity-80 transition-opacity">
-            <Link href="/dashboard" className="flex items-center gap-3">
-              <img src="/kc-icon.svg" alt="KillCode Logo" className="h-8 w-8" />
+          <SidebarGroupLabel className="flex items-center gap-2 px-3 py-2 mb-4 text-foreground cursor-pointer hover:opacity-80 transition-opacity">
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <img src="/kc-icon.svg" alt="KillCode Logo" className="h-6 w-6" />
               <GlitchText
                 speed={0.5}
                 enableShadows={true}
@@ -99,7 +100,7 @@ export function AppSidebar() {
                 secondGlitchColor={"var(--secondary)"}
                 keepFirstGlitch={true}
                 keepSecondGlitch={false}
-                size={"2rem"}
+                size={"1.5rem"}
                 glitchIntensity={3}
                 textColor="var(--foreground)"
                 className="inline-block align-baseline !opacity-100"
@@ -108,7 +109,7 @@ export function AppSidebar() {
               </GlitchText>
             </Link>
           </SidebarGroupLabel>
-          <SidebarGroupContent className="mt-4">
+          <SidebarGroupContent className="mt-2">
             <SidebarMenu>
               {navigation.map((item) => {
                 const isActive = pathname === item.href;
@@ -117,11 +118,14 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       asChild
                       isActive={isActive}
-                      className="py-6 px-4"
+                      className={cn(
+                        "py-2 px-3 h-9 transition-all",
+                        !isActive && "text-muted-foreground hover:text-foreground"
+                      )}
                     >
                       <Link href={item.href}>
-                        <item.icon className="h-6 w-6" />
-                        <span className="ml-3 text-xl font-semibold">
+                        <item.icon className="h-4 w-4" />
+                        <span className="ml-2 text-sm font-medium">
                           {item.name}
                         </span>
                       </Link>
@@ -135,41 +139,59 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                   isActive={pathname?.startsWith("/settings")}
-                  className="py-6 px-4 w-full justify-between group"
+                  className={cn(
+                    "py-2 px-3 h-9 w-full justify-between group transition-all",
+                    !pathname?.startsWith("/settings") &&
+                      "text-muted-foreground hover:text-foreground"
+                  )}
                 >
                   <div className="flex items-center">
-                    <Settings className="h-6 w-6" />
-                    <span className="ml-3 text-xl font-semibold">Settings</span>
+                    <Settings className="h-4 w-4" />
+                    <span className="ml-2 text-sm font-medium">Settings</span>
                   </div>
                   {isSettingsOpen ? (
-                    <ChevronDown className="h-4 w-4 opacity-50" />
+                    <ChevronDown className="h-3.5 w-3.5 opacity-50" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 opacity-50" />
+                    <ChevronRight className="h-3.5 w-3.5 opacity-50" />
                   )}
                 </SidebarMenuButton>
                 
-                {isSettingsOpen && (
-                  <div className="mt-1 space-y-1 px-4">
-                    {settingsItems.map((item) => {
-                      const isActive = pathname === item.href;
-                      return (
-                        <SidebarMenuButton
-                          key={item.name}
-                          asChild
-                          isActive={isActive}
-                          className="py-4 px-4 pl-10"
-                        >
-                          <Link href={item.href}>
-                            <item.icon className="h-5 w-5" />
-                            <span className="ml-3 text-lg font-medium">
-                              {item.name}
-                            </span>
-                          </Link>
-                        </SidebarMenuButton>
-                      );
-                    })}
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {isSettingsOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="mt-1 space-y-0.5">
+                        {settingsItems.map((item) => {
+                          const isActive = pathname === item.href;
+                          return (
+                            <SidebarMenuButton
+                              key={item.name}
+                              asChild
+                              isActive={isActive}
+                              className={cn(
+                                "py-2 px-3 pl-8 h-9 transition-all",
+                                !isActive &&
+                                  "text-muted-foreground hover:text-foreground"
+                              )}
+                            >
+                              <Link href={item.href}>
+                                <item.icon className="h-4 w-4" />
+                                <span className="ml-2 text-sm font-medium">
+                                  {item.name}
+                                </span>
+                              </Link>
+                            </SidebarMenuButton>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
