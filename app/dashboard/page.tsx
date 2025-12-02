@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NavigationLayout } from "@/components/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
+import { PageHeader } from "@/components/ui/page-header";
 import { telemetryApi } from "@/lib/api";
 import type { DashboardStats } from "@/types";
 import { 
@@ -135,25 +136,23 @@ export default function DashboardPage() {
         variants={containerVariants}
       >
         {/* Header */}
-        <motion.div variants={itemVariants} className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground">
-              System-wide overview of your binary protection system
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchStats}
-              disabled={refreshing}
-              className="gap-2"
-            >
-              <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
-          </div>
+        <motion.div variants={itemVariants}>
+          <PageHeader
+            title="Dashboard"
+            subtitle="System-wide overview of your protection system"
+            actions={
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchStats}
+                disabled={refreshing}
+                className="gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+                Refresh
+              </Button>
+            }
+          />
         </motion.div>
 
         {/* Key Metrics */}
@@ -269,15 +268,15 @@ export default function DashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants} whileHover={{ scale: 1.02 }}>
-            <Card className="border-blue-500/20 bg-blue-500/5">
+            <Card className="border-secondary/40 bg-secondary/8">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                  <TrendingUp className="h-5 w-5 text-secondary" />
                   Recent Activity
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-blue-600">
+                <div className="text-3xl font-bold text-secondary">
                   {stats?.verifications_last_24h || 0}
                 </div>
                 <p className="text-sm text-muted-foreground">

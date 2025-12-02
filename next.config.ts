@@ -5,6 +5,17 @@ const nextConfig: NextConfig = {
   turbopack: {},
   // Enable standalone output for production Docker builds
   output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  // Redirect all auth-related routes to /auth
+  async redirects() {
+    return [
+      { source: '/login', destination: '/auth', permanent: true },
+      { source: '/signup', destination: '/auth', permanent: true },
+      { source: '/signin', destination: '/auth', permanent: true },
+      { source: '/auth/login', destination: '/auth', permanent: true },
+      { source: '/auth/signin', destination: '/auth', permanent: true },
+      { source: '/auth/signup', destination: '/auth', permanent: true },
+    ];
+  },
   // Enable hot reload in Docker
   webpack: (config) => {
     config.watchOptions = {

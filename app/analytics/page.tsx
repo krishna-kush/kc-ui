@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { NavigationLayout } from "@/components/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
+import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { telemetryApi, type AnalyticsData } from "@/lib/api";
@@ -81,24 +82,22 @@ export default function AnalyticsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
-              <p className="text-muted-foreground">
-                Detailed insights and metrics for your binary licenses
-              </p>
-            </div>
-            <Button
-              onClick={fetchAnalytics}
-              variant="outline"
-              size="sm"
-              disabled={refreshing}
-              className="gap-2"
-            >
-              <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
-          </div>
+          <PageHeader
+            title="Analytics"
+            subtitle="Detailed insights and metrics for your licenses"
+            actions={
+              <Button
+                onClick={fetchAnalytics}
+                variant="outline"
+                size="sm"
+                disabled={refreshing}
+                className="gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+                Refresh
+              </Button>
+            }
+          />
 
           {/* Key Metrics */}
           <div className="grid gap-4 md:grid-cols-4">

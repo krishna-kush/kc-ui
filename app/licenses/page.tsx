@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { NavigationLayout } from "@/components/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
+import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -192,18 +193,16 @@ export default function LicensesPage() {
     <ProtectedRoute>
       <NavigationLayout>
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">All Licenses</h1>
-              <p className="text-muted-foreground">
-                Manage and monitor all licenses across binaries
-              </p>
-            </div>
-            <Button onClick={fetchLicenses} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
-          </div>
+          <PageHeader
+            title="All Licenses"
+            subtitle="Manage and monitor all licenses"
+            actions={
+              <Button onClick={fetchLicenses} disabled={loading} size="sm" variant="outline">
+                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+                Refresh
+              </Button>
+            }
+          />
 
           <Card>
             <CardHeader>

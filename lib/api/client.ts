@@ -42,8 +42,8 @@ api.interceptors.response.use(
           localStorage.removeItem("user");
           
           // Redirect to login page
-          if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth/signin')) {
-            window.location.href = '/auth/signin?expired=true';
+          if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth')) {
+            window.location.href = '/auth?expired=true';
           }
         }
       }

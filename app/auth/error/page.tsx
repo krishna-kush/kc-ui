@@ -63,7 +63,7 @@ function AuthErrorContent() {
               </Link>
             </Button>
             <Button asChild className="gap-2">
-              <Link href="/auth/signin">Try Again</Link>
+              <Link href="/auth">Try Again</Link>
             </Button>
           </CardFooter>
         </Card>

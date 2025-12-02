@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { NavigationLayout } from "@/components/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
+import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -172,54 +173,50 @@ export default function LicenseStatsPage() {
   return (
     <ProtectedRoute>
       <NavigationLayout>
-        <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background p-6">
+        <div className="space-y-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-7xl mx-auto"
+            className="max-w-7xl mx-auto space-y-6"
           >
-            {/* Header */}
-            <div className="mb-8 flex items-center justify-between">
-              <div>
+            <PageHeader
+              title="License Stats"
+              subtitle={licenseId}
+              leading={
                 <Button
                   variant="ghost"
+                  size="icon"
                   onClick={() => router.back()}
-                  className="mb-4"
                 >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
+                  <ArrowLeft className="h-5 w-5" />
                 </Button>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent mb-2">
-                  License Stats
-                </h1>
-                <p className="text-muted-foreground">
-                  {licenseId}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                {stats && (
-                  <>
-                    <Button onClick={() => setShowEditDialog(true)} size="lg" variant="outline">
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit Settings
-                    </Button>
-                    <Button
-                      onClick={() => setShowDeleteDialog(true)}
-                      size="lg"
-                      variant="outline"
-                      className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete License
-                    </Button>
-                  </>
-                )}
-                <Button onClick={handleDownload} size="lg">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Binary
-                </Button>
-              </div>
-            </div>
+              }
+              actions={
+                <>
+                  {stats && (
+                    <>
+                      <Button onClick={() => setShowEditDialog(true)} size="sm" variant="outline">
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit Settings
+                      </Button>
+                      <Button
+                        onClick={() => setShowDeleteDialog(true)}
+                        size="sm"
+                        variant="outline"
+                        className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete License
+                      </Button>
+                    </>
+                  )}
+                  <Button onClick={handleDownload} size="sm">
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Binary
+                  </Button>
+                </>
+              }
+            />
 
             {loading ? (
               <div className="text-center py-12">Loading...</div>

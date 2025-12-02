@@ -155,7 +155,7 @@ export default function HeroSection() {
             variants={itemVariants}
             className="flex flex-col gap-4 sm:flex-row sm:justify-center"
           >
-            <Link href="/auth/signin">
+            <Link href="/auth">
               <Button size="lg" className="gap-2">
                 Get Started
                 <ArrowRight className="h-4 w-4" suppressHydrationWarning />

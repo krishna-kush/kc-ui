@@ -48,6 +48,7 @@ import {
 import { formatBytes } from "@/lib/utils";
 import { NavigationLayout } from "@/components/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
+import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { binaryApi, licenseApi } from "@/lib/api";
 import { Input } from "@/components/ui/input";
@@ -320,16 +321,10 @@ export default function SettingsPage() {
     <ProtectedRoute>
       <NavigationLayout>
         <div className="space-y-6 max-w-5xl mx-auto">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">
-                Storage Management
-              </h1>
-              <p className="text-muted-foreground">
-                Manage your storage usage and clean up old files.
-              </p>
-            </div>
-            <div className="flex gap-2">
+          <PageHeader
+            title="Storage Management"
+            subtitle="Manage your storage usage and clean up old files."
+            actions={
               <Button
                 variant="outline"
                 size="sm"
@@ -342,8 +337,8 @@ export default function SettingsPage() {
                 />
                 Refresh
               </Button>
-            </div>
-          </div>
+            }
+          />
 
           {/* Storage Overview */}
           <Card>
