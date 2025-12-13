@@ -80,7 +80,7 @@ function SidebarLogo({ isDark, showExpandIcon }: { isDark: boolean; showExpandIc
         {showExpandIcon ? (
           <PanelLeftOpen className="h-6 w-6 text-foreground" />
         ) : (
-          <img src="/kc-icon.svg" alt="KillCode Logo" className="h-6 w-6 shrink-0" />
+          <img src="/assets/logo/kc-logo.svg" alt="KillCode Logo" className="h-6 w-6 shrink-0" />
         )}
       </div>
     );
@@ -89,7 +89,6 @@ function SidebarLogo({ isDark, showExpandIcon }: { isDark: boolean; showExpandIc
   // In expanded mode, show full logo linking to dashboard
   return (
     <Link href="/dashboard" className="flex items-center gap-2">
-      <img src="/kc-icon.svg" alt="KillCode Logo" className="h-6 w-6 shrink-0" />
       <GlitchText
         speed={0.5}
         enableShadows={true}

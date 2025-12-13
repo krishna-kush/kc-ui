@@ -135,18 +135,15 @@ export default function LicenseStatsPage() {
 
   const handleDownload = async () => {
     if (!stats) return;
-    const toastId = toast.loading(`Downloading binary...`);
+    const toastId = toast.loading(`Preparing download...`);
     try {
-      const blob = await binaryApi.download(stats.license.binary_id, licenseId);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `merged_${licenseId.substring(0, 8)}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      toast.success(`Downloaded successfully`, { id: toastId });
+      // This triggers browser's native download manager
+      await binaryApi.download(stats.license.binary_id, licenseId);
+
+      // Note: stats object doesn't currently have binary name, so we use generic message
+      // To fix this properly, the stats API response needs to include binary details
+      toast.success(`Download started`, { id: toastId });
+
     } catch (error: any) {
       console.error("Download error:", error);
       if (error.message && (error.message.includes("Storage quota exceeded") || error.message.includes("not enough space"))) {

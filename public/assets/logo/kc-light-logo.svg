@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   sodipodi:docname="kc-light-logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="px"
+     inkscape:zoom="0.54551781"
+     inkscape:cx="-15.581526"
+     inkscape:cy="128.31845"
+     inkscape:window-width="1920"
+     inkscape:window-height="1080"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect1"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,80,0,1 @ F,0,0,1,0,80,0,1 @ F,0,0,1,0,80,0,1 @ F,0,0,1,0,80,0,1"
+       radius="80"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <linearGradient
+       id="swatch11"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#ed2734;stop-opacity:1;"
+         offset="0"
+         id="stop12" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop4" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop5" />
+    </linearGradient>
+    <rect
+       x="164.29346"
+       y="228.22353"
+       width="549.59625"
+       height="430.86142"
+       id="rect2" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4"
+       id="radialGradient5"
+       cx="105"
+       cy="148.5"
+       fx="105"
+       fy="148.5"
+       r="99.800224"
+       gradientTransform="matrix(2.5637989,0,0,2.5637989,-13.19889,-124.72414)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="display:inline;fill:#e5e5e5;fill-opacity:1;stroke:url(#radialGradient5);stroke-width:0.264583"
+       id="rect5"
+       width="511.73541"
+       height="511.73541"
+       x="0.1322937"
+       y="0.1322937"
+       ry="0"
+       rx="0"
+       inkscape:label="bg"
+       inkscape:path-effect="#path-effect1"
+       sodipodi:type="rect"
+       d="M 80.132294,0.1322937 H 431.86771 a 80,80 45 0 1 80,80.0000003 V 431.86771 a 80,80 135 0 1 -80,80 H 80.132294 a 80,80 45 0 1 -80.0000003,-80 V 80.132294 A 80,80 135 0 1 80.132294,0.1322937 Z" />
+    <text
+       xml:space="preserve"
+       transform="matrix(1.7513948,0,0,1.6527204,-284.27705,-355.61272)"
+       id="text2"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:252.841px;font-family:'Balsamiq Sans';-inkscape-font-specification:'Balsamiq Sans, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect2);shape-padding:9.07348;display:inline;fill:#ed2734;fill-opacity:1;stroke-width:0.155515"
+       inkscape:label="txt"><tspan
+         x="173.36719"
+         y="458.53275"
+         id="tspan2">kc</tspan></text>
+  </g>
+</svg>

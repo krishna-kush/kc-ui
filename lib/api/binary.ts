@@ -56,12 +56,44 @@ export const binaryApi = {
 
   download: async (id: string, licenseId?: string) => {
     const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    
+    // Step 1: Get one-time download token (requires auth)
+    const tokenResponse = await api.post<{
+      token: string;
+      download_url: string;
+      expires_in: number;
+    }>(`/binary/${id}/download-token`, { license_id: licenseId });
+    
+    // Step 2: Construct download URL using frontend's baseURL (not server's internal URL)
+    // The server may return localhost URL, but we use the public API URL
+    const token = tokenResponse.data.token;
+    const downloadUrl = licenseId
+      ? `${baseURL}/download/${id}?license_id=${licenseId}&token=${token}`
+      : `${baseURL}/download/${id}?token=${token}`;
+    
+    // Create a hidden link and trigger download
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Return a resolved promise (download started)
+    return Promise.resolve();
+  },
+
+  // Legacy download method that returns blob (for cases where you need the data in memory)
+  downloadBlob: async (id: string, licenseId?: string) => {
+    const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
     const url = licenseId 
       ? `${baseURL}/binary/${id}/download?license_id=${licenseId}`
       : `${baseURL}/binary/${id}/download`;
     
     const response = await fetch(url, {
+      method: 'GET',
       headers: getAuthHeaders(),
+      cache: 'no-store',
     });
 
     if (!response.ok) {

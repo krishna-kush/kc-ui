@@ -33,8 +33,19 @@ api.interceptors.response.use(
     if (error.response) {
       console.error('[API] Error Response:', error.response.status, error.response.data);
       
+      const status = error.response.status;
+      const message: string | undefined =
+        (typeof error.response.data === 'string'
+          ? error.response.data
+          : error.response.data?.error) || undefined;
+
       // Auto-logout on 401 Unauthorized (token expired or invalid)
-      if (error.response.status === 401) {
+      // Also handle explicit user-not-found-ish errors by redirecting to auth
+      if (
+        status === 401 ||
+        status === 403 ||
+        status === 404 && message && /user not found/i.test(message)
+      ) {
         const token = localStorage.getItem("token");
         if (token) {
           console.warn('[API] Token expired or invalid. Logging out...');
@@ -43,7 +54,8 @@ api.interceptors.response.use(
           
           // Redirect to login page
           if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth')) {
-            window.location.href = '/auth?expired=true';
+            const reason = status === 404 ? 'user_not_found' : 'expired';
+            window.location.href = `/auth?reason=${reason}`;
           }
         }
       }

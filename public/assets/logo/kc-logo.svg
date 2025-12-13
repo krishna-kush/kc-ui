@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   sodipodi:docname="kc-logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title1">killcode-logo</title>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="px"
+     inkscape:zoom="0.5"
+     inkscape:cx="142"
+     inkscape:cy="342"
+     inkscape:window-width="1920"
+     inkscape:window-height="1080"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect1"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,80,0,1 @ F,0,0,1,0,80,0,1 @ F,0,0,1,0,80,0,1 @ F,0,0,1,0,80,0,1"
+       radius="80"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <linearGradient
+       id="swatch11"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#ed2734;stop-opacity:1;"
+         offset="0"
+         id="stop12" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop4" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop5" />
+    </linearGradient>
+    <rect
+       x="164.29346"
+       y="228.22353"
+       width="549.59625"
+       height="430.86142"
+       id="rect2" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4"
+       id="radialGradient5"
+       cx="105"
+       cy="148.5"
+       fx="105"
+       fy="148.5"
+       r="99.800224"
+       gradientTransform="matrix(2.5637988,0,0,2.5637987,-13.198899,-124.72412)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="display:inline;fill:#ed2633;fill-opacity:1;stroke:url(#radialGradient5);stroke-width:0.264582"
+       id="rect5"
+       width="511.73541"
+       height="511.73541"
+       x="0.1322937"
+       y="0.1322937"
+       ry="0"
+       rx="0"
+       inkscape:label="bg"
+       inkscape:path-effect="#path-effect1"
+       sodipodi:type="rect"
+       d="M 80.132294,0.1322937 H 431.86771 a 80,80 45 0 1 80,80.0000003 V 431.86771 a 80,80 135 0 1 -80,80 H 80.132294 a 80,80 45 0 1 -80.0000003,-80 V 80.132294 A 80,80 135 0 1 80.132294,0.1322937 Z" />
+    <path
+       d="m 271.72234,453.47593 v 0 q 4.80398,5.05682 10.11364,5.5625 5.5625,0.50569 10.36648,-2.02272 4.80398,-2.78125 7.58523,-7.33239 2.78125,-4.80398 2.27557,-10.11364 -0.25284,-5.5625 -5.05682,-10.36648 -20.73296,-21.23865 -34.89206,-43.7415 l 30.08808,-30.8466 q 4.80398,-5.30966 5.05682,-10.61932 0.25284,-5.5625 -2.78125,-10.11364 -2.78125,-4.80398 -7.58523,-7.33239 -4.80398,-2.52841 -10.36648,-1.76989 -5.30966,0.50568 -10.11364,5.5625 -21.74433,23.26138 -41.46593,42.47729 -0.75852,-34.63921 -2.27557,-78.88639 -0.50568,-8.59659 -6.06818,-12.64205 -5.5625,-4.2983 -12.64205,-4.04546 -6.82671,0.25284 -11.88353,4.80398 -5.05682,4.55114 -4.80398,13.40058 3.28694,100.12503 2.52841,145.63641 0,8.5966 5.05682,13.14774 5.30966,4.29829 12.13637,4.29829 7.07955,0.25284 12.38921,-4.04545 5.5625,-4.2983 5.81534,-12.89489 v -20.48013 q 0.50569,-0.50568 1.01137,-0.75852 l 10.11364,-9.60796 q 14.41193,21.23865 35.39774,42.73013 z m 123.63918,4.04546 v 0 q 11.88352,-3.53978 20.48012,-12.38921 5.5625,-5.5625 9.60796,-15.17046 1.01136,-1.76989 2.27556,-5.05682 1.51705,-3.28693 2.27557,-5.05682 3.0341,-6.06818 1.76989,-11.125 -1.2642,-5.30967 -5.30966,-8.84944 -4.04546,-3.53977 -9.35512,-4.80398 -5.05682,-1.2642 -10.11364,1.01137 -5.05682,2.02272 -8.34375,8.09091 -0.25284,0.50568 -5.5625,12.13637 -1.76989,4.04545 -3.0341,5.30966 -3.79261,3.79261 -10.11364,4.80398 -6.06818,0.75852 -14.91761,-2.52841 -8.34376,-3.28694 -13.40058,-10.61933 -5.05682,-7.58523 -5.5625,-14.66477 -0.75852,-7.58523 2.52841,-16.18183 3.53977,-8.59659 9.60796,-14.91762 11.63068,-12.38921 25.2841,-6.82671 1.51704,0.75853 4.55114,3.28694 9.10227,7.83807 9.60796,8.09091 5.5625,4.2983 10.87216,4.2983 5.5625,-0.25284 9.8608,-3.53978 4.29829,-3.28693 6.32102,-8.09091 2.27557,-4.80398 1.26421,-10.11364 -1.01137,-5.30966 -6.57387,-9.60796 l -4.55114,-3.79261 q -2.78125,-2.52841 -3.28693,-3.03409 -7.58523,-6.32103 -14.41194,-9.10228 -12.64205,-5.5625 -25.03126,-4.2983 -12.38921,1.26421 -21.99716,6.06819 -9.8608,5.05682 -17.69887,13.14773 -10.87217,11.125 -16.94035,26.80114 -5.81534,15.42331 -4.80398,30.34093 1.01136,11.88352 6.57387,22.75569 5.5625,10.61932 14.15909,18.96307 8.84944,8.34375 19.7216,12.64205 10.36648,4.04546 21.49149,5.05682 11.125,1.01137 22.75569,-3.03409 z"
+       id="text2"
+       style="font-weight:bold;font-size:252.841px;font-family:'Balsamiq Sans';-inkscape-font-specification:'Balsamiq Sans, Bold';white-space:pre;shape-padding:9.07348;fill:#fff0f1;stroke-width:0.148092"
+       inkscape:label="txt"
+       transform="matrix(1.7866247,0,0,1.7866247,-295.90309,-403.76469)"
+       aria-label="kc" />
+  </g>
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>killcode-logo</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Krishna Kushwaha</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

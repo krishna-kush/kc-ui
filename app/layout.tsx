@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   title: "KillCode",
   description: "Secure binary licensing and protection with continuous verification",
   icons: {
-    icon: "/kc-icon.svg",
-    apple: "/kc-icon.svg",
+    icon: "/assets/logo/kc-logo.svg",
+    apple: "/assets/logo/kc-logo.svg",
   },
 };
 

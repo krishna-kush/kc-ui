@@ -85,18 +85,11 @@ export default function BinariesPage() {
   }, []);
 
     const handleDownload = async (binary: Binary) => {
-    const toastId = toast.loading(`Downloading ${binary.original_name}...`);
+    const toastId = toast.loading(`Preparing download...`);
     try {
-      const blob = await binaryApi.download(binary.binary_id);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = binary.original_name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      toast.success(`Downloaded ${binary.original_name}`, { id: toastId });
+      // This triggers browser's native download manager
+      await binaryApi.download(binary.binary_id);
+      toast.success(`Download started: ${binary.original_name}`, { id: toastId });
     } catch (error) {
       toast.error("Failed to download binary", { id: toastId });
     }

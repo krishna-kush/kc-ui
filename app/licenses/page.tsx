@@ -324,18 +324,11 @@ export default function LicensesPage() {
                                 className="h-8 w-8 cursor-pointer"
                                 onClick={async (e) => {
                                   e.stopPropagation();
-                                  const toastId = toast.loading(`Downloading ${license.binary_name}...`);
+                                  const toastId = toast.loading(`Preparing download...`);
                                   try {
-                                    const blob = await binaryApi.download(license.binary_id, license.license_id);
-                                    const url = window.URL.createObjectURL(blob);
-                                    const link = document.createElement("a");
-                                    link.href = url;
-                                    link.download = `${license.binary_name}_${license.license_id.substring(0, 8)}`;
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-                                    window.URL.revokeObjectURL(url);
-                                    toast.success(`Downloaded successfully`, { id: toastId });
+                                    // This triggers browser's native download manager
+                                    await binaryApi.download(license.binary_id, license.license_id);
+                                    toast.success(`Download started`, { id: toastId });
                                   } catch (error: any) {
                                     console.error("Download error:", error);
                                     if (error.message && (error.message.includes("Storage quota exceeded") || error.message.includes("not enough space"))) {

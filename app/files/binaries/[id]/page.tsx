@@ -127,18 +127,11 @@ export default function BinaryDetailPage() {
 
   const handleDownload = async () => {
     if (!binary) return;
-    const toastId = toast.loading(`Downloading ${binary.original_name}...`);
+    const toastId = toast.loading(`Preparing download...`);
     try {
-      const blob = await binaryApi.download(binaryId);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = binary.original_name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      toast.success(`Downloaded ${binary.original_name}`, { id: toastId });
+      // This triggers browser's native download manager
+      await binaryApi.download(binaryId);
+      toast.success(`Download started: ${binary.original_name}`, { id: toastId });
     } catch (error) {
       toast.error("Failed to download binary", { id: toastId });
     }
@@ -614,18 +607,11 @@ export default function BinaryDetailPage() {
                             className="h-8 w-8"
                             onClick={async (e) => {
                               e.stopPropagation();
-                              const toastId = toast.loading(`Downloading ${binary?.original_name}...`);
+                              const toastId = toast.loading(`Preparing download...`);
                               try {
-                                const blob = await binaryApi.download(binaryId, license.license_id);
-                                const url = window.URL.createObjectURL(blob);
-                                const link = document.createElement("a");
-                                link.href = url;
-                                link.download = `${binary?.original_name}_${license.license_id.substring(0, 8)}`;
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-                                window.URL.revokeObjectURL(url);
-                                toast.success(`Downloaded successfully`, { id: toastId });
+                                // This triggers browser's native download manager
+                                await binaryApi.download(binaryId, license.license_id);
+                                toast.success(`Download started: ${binary.original_name}`, { id: toastId });
                               } catch (error) {
                                 toast.error("Failed to download", { id: toastId });
                               }
