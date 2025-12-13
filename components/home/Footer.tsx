@@ -12,47 +12,59 @@ export default function Footer() {
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      // Handle subscription logic here
-      setIsSubscribed(true);
-      setEmail("");
-      setTimeout(() => setIsSubscribed(false), 3000);
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8082'}/newsletter/subscribe`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        if (response.ok) {
+          setIsSubscribed(true);
+          setEmail("");
+          setTimeout(() => setIsSubscribed(false), 3000);
+        } else {
+          console.error('Failed to subscribe');
+        }
+      } catch (error) {
+        console.error('Error subscribing:', error);
+      }
     }
   };
 
   const footerLinks = {
     product: [
-      { label: "Features", href: "#features" },
-      { label: "Pricing", href: "#pricing" },
-      { label: "Documentation", href: "/docs" },
-      { label: "API Reference", href: "/api" },
+      { label: "Binary Licensing", href: "/auth", upcoming: false },
+      { label: ".kc Media Viewer", href: "#", upcoming: true },
+      { label: "JPG MP4 PDF Licensing", href: "#", upcoming: true },
+      { label: "DRM Protection on Videos", href: "#", upcoming: true },
     ],
     company: [
-      { label: "About", href: "/about" },
-      { label: "Blog", href: "/blog" },
-      { label: "Careers", href: "/careers" },
-      { label: "Contact", href: "/contact" },
+      { label: "Contact", href: "mailto:admin@killcode.app", icon: Mail },
     ],
     legal: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms of Service", href: "/terms-of-service" },
       { label: "License", href: "/license" },
-      { label: "Security", href: "/security" },
     ],
   };
 
   const socialLinks = [
     { icon: Github, href: "https://github.com/krishna-kush/killcode", label: "GitHub" },
-    { icon: Mail, href: "mailto:contact@killcode.app", label: "Email" },
+    { icon: Mail, href: "mailto:admin@killcode.app", label: "Email" },
   ];
 
   return (
-    <footer className="relative bg-[oklch(0.09_0_0)] border-t border-[oklch(0.18_0_0)] overflow-hidden dark">
+    <footer className="relative bg-background border-t border-muted overflow-hidden dark">
       {/* Balatro Background */}
       <div className="absolute inset-0 opacity-65 pointer-events-none">
         <DarkThemeBalatro
+          spinSpeed = {5.0}
           isRotate={false}
           mouseInteraction={true}
           pixelFilter={700}
@@ -66,9 +78,9 @@ export default function Footer() {
           <div className="lg:col-span-2 space-y-12 py-16">
             {/* Logo and Description */}
             <div>
-              <h3 className="text-3xl font-bold text-[oklch(0.98_0_0)] mb-4">killcode</h3>
-              <p className="text-[oklch(0.64_0_0)] max-w-md">
-                Secure binary licensing and protection system with continuous verification and real-time monitoring.
+              <h3 className="text-3xl font-bold text-foreground mb-4">killcode</h3>
+              <p className="text-white max-w-md">
+                Secure File licensing and protection system with continuous verification and real-time monitoring.
               </p>
             </div>
 
@@ -76,16 +88,23 @@ export default function Footer() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
               {/* Product */}
               <div>
-                <h4 className="text-[oklch(0.98_0_0)] font-semibold mb-4">Product</h4>
+                <h4 className="text-foreground font-semibold mb-4">Product</h4>
                 <ul className="space-y-2">
                   {footerLinks.product.map((link) => (
                     <li key={link.label}>
-                      <Link 
-                        href={link.href}
-                        className="text-[oklch(0.64_0_0)] hover:text-[oklch(0.98_0_0)] transition-colors"
-                      >
-                        {link.label}
-                      </Link>
+                      {link.upcoming ? (
+                        <span className="text-white cursor-not-allowed flex items-center gap-2">
+                          {link.label}
+                          <span className="text-[10px] bg-transparent text-white px-1.5 py-0.5 rounded border border-primary">Upcoming</span>
+                        </span>
+                      ) : (
+                        <Link 
+                          href={link.href}
+                          className="text-white hover:text-foreground transition-colors"
+                        >
+                          {link.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -93,16 +112,26 @@ export default function Footer() {
 
               {/* Company */}
               <div>
-                <h4 className="text-[oklch(0.98_0_0)] font-semibold mb-4">Company</h4>
+                <h4 className="text-foreground font-semibold mb-4">Company</h4>
                 <ul className="space-y-2">
                   {footerLinks.company.map((link) => (
                     <li key={link.label}>
-                      <Link 
-                        href={link.href}
-                        className="text-[oklch(0.64_0_0)] hover:text-[oklch(0.98_0_0)] transition-colors"
-                      >
-                        {link.label}
-                      </Link>
+                      {link.icon ? (
+                        <a 
+                          href={link.href}
+                          className="text-white hover:text-foreground transition-colors flex items-center gap-2"
+                        >
+                          {link.label}
+                          <link.icon className="h-4 w-4" />
+                        </a>
+                      ) : (
+                        <Link 
+                          href={link.href}
+                          className="text-white hover:text-foreground transition-colors"
+                        >
+                          {link.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -110,13 +139,13 @@ export default function Footer() {
 
               {/* Legal */}
               <div>
-                <h4 className="text-[oklch(0.98_0_0)] font-semibold mb-4">Legal</h4>
+                <h4 className="text-foreground font-semibold mb-4">Legal</h4>
                 <ul className="space-y-2">
                   {footerLinks.legal.map((link) => (
                     <li key={link.label}>
                       <Link 
                         href={link.href}
-                        className="text-[oklch(0.64_0_0)] hover:text-[oklch(0.98_0_0)] transition-colors"
+                        className="text-white hover:text-foreground transition-colors"
                       >
                         {link.label}
                       </Link>
@@ -128,9 +157,9 @@ export default function Footer() {
 
             {/* Newsletter Subscription */}
             <div className="max-w-md">
-              <h4 className="text-[oklch(0.98_0_0)] font-semibold mb-4">Subscribe to our newsletter</h4>
-              <p className="text-[oklch(0.64_0_0)] text-sm mb-4">
-                Get the latest updates on binary protection and security.
+              <h4 className="text-foreground font-semibold mb-4">Subscribe to our newsletter</h4>
+              <p className="text-white text-sm mb-4">
+                Get the latest updates on file protection and security.
               </p>
               <form onSubmit={handleSubscribe} className="flex gap-2">
                 <Input
@@ -138,7 +167,7 @@ export default function Footer() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-[oklch(0.13_0_0)] border-[oklch(0.18_0_0)] text-[oklch(0.98_0_0)] placeholder:text-[oklch(0.64_0_0)] focus:border-[oklch(0.55_0.22_25)]"
+                  className="bg-card border-muted text-white placeholder:text-white focus:border-primary"
                   required
                 />
                 <Button 
@@ -152,7 +181,7 @@ export default function Footer() {
 
             {/* Social Links */}
             <div>
-              <h4 className="text-[oklch(0.98_0_0)] font-semibold mb-4">Follow Us</h4>
+              <h4 className="text-foreground font-semibold mb-4">Follow Us</h4>
               <div className="flex gap-4">
                 {socialLinks.map((social) => (
                   <a
@@ -160,7 +189,7 @@ export default function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[oklch(0.64_0_0)] hover:text-[oklch(0.98_0_0)] transition-colors"
+                    className="text-white hover:text-foreground transition-colors"
                     aria-label={social.label}
                   >
                     <social.icon className="h-6 w-6" />
@@ -177,17 +206,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-[oklch(0.18_0_0)]">
+        <div className="pt-8 border-t border-muted">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-[oklch(0.64_0_0)] text-sm text-center md:text-left">
+            <p className="text-white text-sm text-center md:text-left">
               © 2025 KillCode. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
-              <Link href="/sitemap" className="text-[oklch(0.64_0_0)] hover:text-[oklch(0.98_0_0)] transition-colors">
+              <Link href="/sitemap.xml" className="text-white hover:text-foreground transition-colors">
                 Sitemap
-              </Link>
-              <Link href="/rss" className="text-[oklch(0.64_0_0)] hover:text-[oklch(0.98_0_0)] transition-colors">
-                RSS
               </Link>
             </div>
           </div>

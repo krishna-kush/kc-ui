@@ -31,18 +31,18 @@ export default function HowItWorksSection() {
           {[
             {
               step: "1",
-              title: "Upload Your Binary",
-              description: "Upload your executable and configure license settings including check intervals, grace periods, and execution limits.",
+              title: "Upload Your File",
+              description: "Upload your file and configure license settings including check intervals, grace periods, and execution limits.",
             },
             {
               step: "2",
-              title: "Get Protected Binary",
-              description: "Our system merges your binary with the protection layer and generates a license-protected executable with embedded verification.",
+              title: "Get Protected File",
+              description: "Our system merges your file with the protection layer and generates a license-protected .kc file.",
             },
             {
               step: "3",
               title: "Monitor & Control",
-              description: "Track verification attempts, view analytics, revoke licenses instantly, and monitor usage patterns across all your protected binaries.",
+              description: "Track verification attempts, view analytics, revoke licenses instantly, and monitor usage patterns across all your protected files.",
             },
           ].map((item, index) => (
             <motion.div

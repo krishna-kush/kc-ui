@@ -125,7 +125,7 @@ export default function HeroSection() {
             className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl"
             style={{ color: isDark ? 'var(--foreground)' : 'var(--primary-shade)' }}
           >
-            Protect Your Binaries with{" "}
+            Protect Your Files with{" "}
             <GlitchText 
               speed={0.5}
               minSize="4rem"
@@ -147,7 +147,7 @@ export default function HeroSection() {
             variants={itemVariants}
             className="mx-auto max-w-2xl text-lg text-muted-foreground"
           >
-            A comprehensive binary licensing and protection system that allows you to upload binaries, 
+            A comprehensive file licensing and protection system that allows you to upload files, 
             attach licenses, and enforce usage restrictions through continuous verification.
           </motion.p>
           
