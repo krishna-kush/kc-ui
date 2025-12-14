@@ -2,7 +2,17 @@
 
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Binary, Shield, Upload, RefreshCw, Lock, Activity, Zap, Code, Database } from "lucide-react";
+import {
+  Binary,
+  Shield,
+  Upload,
+  RefreshCw,
+  Lock,
+  Activity,
+  Zap,
+  Code,
+  Database,
+} from "lucide-react";
 import CardSwap, { Card as SwapCard } from "@/components/CardSwap";
 import DualScrollCarousel from "@/components/DualScrollCarousel";
 import GlitchText from "@/components/GlitchText";
@@ -12,14 +22,21 @@ import { useTheme } from "next-themes";
 export default function FeaturesSection() {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  
+
   useEffect(() => {
     setMounted(true);
   }, []);
-  
-  const isDark = mounted ? (resolvedTheme === 'dark' || theme === 'dark') : true;
 
-  const leftFeatures = [
+  const isDark = mounted ? resolvedTheme === "dark" || theme === "dark" : true;
+
+  interface Feature {
+    icon: any;
+    title: string;
+    image: string;
+    detail?: string;
+  }
+
+  const leftFeatures: Feature[] = [
     {
       icon: Binary,
       title: "Many Binaries",
@@ -38,7 +55,7 @@ export default function FeaturesSection() {
     },
   ];
 
-  const rightFeatures = [
+  const rightFeatures: Feature[] = [
     {
       icon: Lock,
       title: "Many Licences",
@@ -56,23 +73,22 @@ export default function FeaturesSection() {
     },
   ];
 
-
   // Format features for ScrollCarousel
-  const leftCarouselFeatures = leftFeatures.map(feature => ({
+  const leftCarouselFeatures = leftFeatures.map((feature) => ({
     icon: feature.icon,
     title: feature.title,
     description: feature.detail || "",
     image: feature.image,
   }));
 
-  const rightCarouselFeatures = rightFeatures.map(feature => ({
+  const rightCarouselFeatures = rightFeatures.map((feature) => ({
     icon: feature.icon,
     title: feature.title,
     description: feature.detail || "",
     image: feature.image,
   }));
 
-  const renderFeatureCard = (feature: typeof leftFeatures[0]) => (
+  const renderFeatureCard = (feature: (typeof leftFeatures)[0]) => (
     <Card className="w-full h-full border-2 p-0 border-border bg-card backdrop-blur transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 overflow-hidden">
       <CardContent className="p-0 h-full flex flex-col">
         {/* Header with icon and title */}
@@ -80,18 +96,20 @@ export default function FeaturesSection() {
           <div className="inline-flex rounded-lg bg-red-500/10 p-2.5">
             <feature.icon className="h-5 w-5 text-red-400" />
           </div>
-          <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
+          <h3 className="text-lg font-semibold text-foreground">
+            {feature.title}
+          </h3>
         </div>
-        
+
         {/* Image */}
         <div className="relative flex-1 bg-background flex items-center justify-center">
-          <img 
-            src={feature.image} 
+          <img
+            src={feature.image}
             alt={feature.title}
             className="w-full h-full object-contain"
           />
         </div>
-        
+
         {/* Optional detail */}
         {feature.detail && (
           <div className="p-4 border-t border-border">
@@ -108,11 +126,18 @@ export default function FeaturesSection() {
         {/* Large screens: Two CardSwaps with centered text */}
         <div className="hidden lg:grid lg:grid-cols-3 gap-8 items-center">
           {/* Left CardSwap */}
-          <div className="relative flex justify-end items-center" style={{ left: '-23%' }}>
-            <div className="relative w-full max-w-[350px] aspect-[4/5]" style={{ overflow: 'visible' }}>
-              <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <div
+            className="relative flex justify-end items-center"
+            style={{ left: "-23%" }}
+          >
+            <div
+              className="relative w-full max-w-[350px] aspect-[4/5]"
+              style={{ overflow: "visible" }}
+            >
+              <div
+                style={{ position: "relative", width: "100%", height: "100%" }}
+              >
                 <div className="features-card-swap-left">
-
                   <CardSwap
                     width={350}
                     height={450}
@@ -143,9 +168,11 @@ export default function FeaturesSection() {
             transition={{ duration: 0.5 }}
             className="text-center px-4"
           >
-            <h2 
-              className={`mb-6 text-4xl xl:text-6xl font-bold text-foreground leading-tight ${isDark ? 'text-shadow-primary-left' : ''}`}
-              style={!isDark ? { color: 'var(--primary-shade)' } : undefined}
+            <h2
+              className={`mb-6 text-4xl xl:text-6xl font-bold text-foreground leading-tight ${
+                isDark ? "text-shadow-primary-left" : ""
+              }`}
+              style={!isDark ? { color: "var(--primary-shade)" } : undefined}
             >
               Extended Protection
             </h2>
@@ -155,11 +182,18 @@ export default function FeaturesSection() {
           </motion.div>
 
           {/* Right CardSwap */}
-          <div className="relative flex justify-start items-center" style={{ right: '-17%' }}>
-            <div className="relative w-full max-w-[350px] aspect-[4/5]" style={{ overflow: 'visible' }}>
-              <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <div
+            className="relative flex justify-start items-center"
+            style={{ right: "-17%" }}
+          >
+            <div
+              className="relative w-full max-w-[350px] aspect-[4/5]"
+              style={{ overflow: "visible" }}
+            >
+              <div
+                style={{ position: "relative", width: "100%", height: "100%" }}
+              >
                 <div className="features-card-swap-right">
-
                   <CardSwap
                     width={350}
                     height={450}
@@ -192,9 +226,11 @@ export default function FeaturesSection() {
             transition={{ duration: 0.5 }}
             className="text-center mb-12 px-4"
           >
-            <h2 
-              className={`mb-6 text-3xl sm:text-4xl font-bold text-foreground leading-tight ${isDark ? 'text-shadow-primary-left' : ''}`}
-              style={!isDark ? { color: 'var(--primary-shade)' } : undefined}
+            <h2
+              className={`mb-6 text-3xl sm:text-4xl font-bold text-foreground leading-tight ${
+                isDark ? "text-shadow-primary-left" : ""
+              }`}
+              style={!isDark ? { color: "var(--primary-shade)" } : undefined}
             >
               Powerful Features for Binary Protection
             </h2>

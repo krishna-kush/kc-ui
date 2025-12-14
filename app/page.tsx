@@ -3,11 +3,12 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import HeroSection from "@/components/home/HeroSection";
-import FeaturesSection from "@/components/home/FeaturesSection";
-import SupportSection from "@/components/home/SupportSection";
-import HowItWorksSection from "@/components/home/HowItWorksSection";
-import Footer from "@/components/home/Footer";
+import HeroSection from "@/components/custom/home/HeroSection";
+import FeaturesSection from "@/components/custom/home/FeaturesSection";
+import SupportSection from "@/components/custom/home/SupportSection";
+import HowItWorksSection from "@/components/custom/home/HowItWorksSection";
+import Footer from "@/components/custom/home/Footer";
+import { Loader } from "@/components/custom/common/loader";
 
 export default function Home() {
   const { isAuthenticated, loading } = useAuth();
@@ -21,14 +22,7 @@ export default function Home() {
 
   // Show loading state while checking auth
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-          <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loader fullScreen />;
   }
 
   // If authenticated, don't render the landing page (redirect is happening)

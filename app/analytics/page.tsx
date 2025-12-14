@@ -5,7 +5,15 @@ import { motion } from "framer-motion";
 import { NavigationLayout } from "@/components/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
 import { PageHeader } from "@/components/ui/page-header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader } from "@/components/custom/common/loader";
+import { StatsCard } from "@/components/custom/common/stats-card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { telemetryApi, type AnalyticsData } from "@/lib/api";
 import {
@@ -38,7 +46,9 @@ import { toast } from "sonner";
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(
+    null
+  );
 
   const fetchAnalytics = async () => {
     try {
@@ -64,10 +74,7 @@ export default function AnalyticsPage() {
       <ProtectedRoute>
         <NavigationLayout>
           <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-              <p className="mt-2 text-sm text-muted-foreground">Loading analytics...</p>
-            </div>
+            <Loader text="Loading analytics..." />
           </div>
         </NavigationLayout>
       </ProtectedRoute>
@@ -93,7 +100,9 @@ export default function AnalyticsPage() {
                 disabled={refreshing}
                 className="gap-2"
               >
-                <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+                <RefreshCw
+                  className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+                />
                 Refresh
               </Button>
             }
@@ -101,75 +110,56 @@ export default function AnalyticsPage() {
 
           {/* Key Metrics */}
           <div className="grid gap-4 md:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Verifications</CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" suppressHydrationWarning />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {analyticsData?.key_metrics.total_verifications.toLocaleString() || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {analyticsData?.key_metrics.growth_rate !== undefined && (
-                    <>
-                      {analyticsData.key_metrics.growth_rate >= 0 ? (
-                        <TrendingUp className="inline h-3 w-3 text-green-500" suppressHydrationWarning />
-                      ) : (
-                        <TrendingDown className="inline h-3 w-3 text-red-500" suppressHydrationWarning />
-                      )}{" "}
-                      {analyticsData.key_metrics.growth_rate >= 0 ? "+" : ""}
-                      {analyticsData.key_metrics.growth_rate.toFixed(1)}% from last week
-                    </>
-                  )}
-                </p>
-              </CardContent>
-            </Card>
+            <StatsCard
+              title="Total Verifications"
+              value={
+                analyticsData?.key_metrics.total_verifications.toLocaleString() ||
+                "0"
+              }
+              icon={Activity}
+              description={
+                analyticsData?.key_metrics.growth_rate !== undefined ? (
+                  <span className="flex items-center gap-1">
+                    {analyticsData.key_metrics.growth_rate >= 0 ? (
+                      <TrendingUp className="h-3 w-3 text-green-500" />
+                    ) : (
+                      <TrendingDown className="h-3 w-3 text-red-500" />
+                    )}
+                    {analyticsData.key_metrics.growth_rate >= 0 ? "+" : ""}
+                    {analyticsData.key_metrics.growth_rate.toFixed(1)}% from
+                    last week
+                  </span>
+                ) : undefined
+              }
+            />
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
-                <BarChart3 className="h-4 w-4 text-muted-foreground" suppressHydrationWarning />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {analyticsData?.key_metrics.success_rate.toFixed(1) || 0}%
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Verification success rate
-                </p>
-              </CardContent>
-            </Card>
+            <StatsCard
+              title="Success Rate"
+              value={`${
+                analyticsData?.key_metrics.success_rate.toFixed(1) || 0
+              }%`}
+              icon={BarChart3}
+              description="Verification success rate"
+            />
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Unique Machines</CardTitle>
-                <MapPin className="h-4 w-4 text-muted-foreground" suppressHydrationWarning />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {analyticsData?.key_metrics.unique_machines.toLocaleString() || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Distinct machine fingerprints
-                </p>
-              </CardContent>
-            </Card>
+            <StatsCard
+              title="Unique Machines"
+              value={
+                analyticsData?.key_metrics.unique_machines.toLocaleString() ||
+                "0"
+              }
+              icon={MapPin}
+              description="Distinct machine fingerprints"
+            />
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg Response Time</CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" suppressHydrationWarning />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {analyticsData?.key_metrics.avg_response_time_ms.toFixed(0) || 0}ms
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Average verification latency
-                </p>
-              </CardContent>
-            </Card>
+            <StatsCard
+              title="Avg Response Time"
+              value={`${
+                analyticsData?.key_metrics.avg_response_time_ms.toFixed(0) || 0
+              }ms`}
+              icon={Activity}
+              description="Average verification latency"
+            />
           </div>
 
           {/* Charts Row - Verifications Over Time and License Status */}
@@ -185,7 +175,10 @@ export default function AnalyticsPage() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={analyticsData?.hourly_activity || []}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      className="stroke-muted"
+                    />
                     <XAxis dataKey="hour" className="text-xs" />
                     <YAxis className="text-xs" />
                     <Tooltip
@@ -222,9 +215,21 @@ export default function AnalyticsPage() {
                   <PieChart>
                     <Pie
                       data={[
-                        { name: "Active", value: analyticsData?.license_status.active || 0, color: "#22c55e" },
-                        { name: "Revoked", value: analyticsData?.license_status.revoked || 0, color: "#ef4444" },
-                        { name: "Expired", value: analyticsData?.license_status.expired || 0, color: "#64748b" },
+                        {
+                          name: "Active",
+                          value: analyticsData?.license_status.active || 0,
+                          color: "#22c55e",
+                        },
+                        {
+                          name: "Revoked",
+                          value: analyticsData?.license_status.revoked || 0,
+                          color: "#ef4444",
+                        },
+                        {
+                          name: "Expired",
+                          value: analyticsData?.license_status.expired || 0,
+                          color: "#64748b",
+                        },
                       ]}
                       cx="50%"
                       cy="50%"
@@ -264,7 +269,10 @@ export default function AnalyticsPage() {
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={analyticsData?.time_series.monthly || []}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-muted"
+                  />
                   <XAxis dataKey="date" className="text-xs" />
                   <YAxis className="text-xs" />
                   <Tooltip
@@ -310,7 +318,10 @@ export default function AnalyticsPage() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={analyticsData?.hourly_activity || []}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      className="stroke-muted"
+                    />
                     <XAxis dataKey="hour" className="text-xs" />
                     <YAxis className="text-xs" />
                     <Tooltip
@@ -338,16 +349,29 @@ export default function AnalyticsPage() {
                 <div className="space-y-4">
                   {analyticsData?.top_binaries.length ? (
                     analyticsData.top_binaries.map((binary, index) => {
-                      const colors = ["#3b82f6", "#8b5cf6", "#06b6d4", "#10b981", "#f59e0b"];
-                      const maxExecutions = analyticsData.top_binaries[0]?.executions || 1;
+                      const colors = [
+                        "#3b82f6",
+                        "#8b5cf6",
+                        "#06b6d4",
+                        "#10b981",
+                        "#f59e0b",
+                      ];
+                      const maxExecutions =
+                        analyticsData.top_binaries[0]?.executions || 1;
                       return (
-                        <div key={binary.binary_id} className="flex items-center gap-4">
+                        <div
+                          key={binary.binary_id}
+                          className="flex items-center gap-4"
+                        >
                           <div className="flex-shrink-0 w-8 text-center font-bold text-muted-foreground">
                             #{index + 1}
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm font-medium truncate" title={binary.name}>
+                              <span
+                                className="text-sm font-medium truncate"
+                                title={binary.name}
+                              >
                                 {binary.name}
                               </span>
                               <span className="text-sm text-muted-foreground ml-2">
@@ -358,8 +382,11 @@ export default function AnalyticsPage() {
                               <div
                                 className="h-full transition-all"
                                 style={{
-                                  width: `${(binary.executions / maxExecutions) * 100}%`,
-                                  backgroundColor: colors[index % colors.length],
+                                  width: `${
+                                    (binary.executions / maxExecutions) * 100
+                                  }%`,
+                                  backgroundColor:
+                                    colors[index % colors.length],
                                 }}
                               />
                             </div>
@@ -387,35 +414,45 @@ export default function AnalyticsPage() {
               <CardContent>
                 <div className="space-y-3">
                   {analyticsData?.geographic_distribution.length ? (
-                    analyticsData.geographic_distribution.map((country, index) => {
-                      const maxCount = analyticsData.geographic_distribution[0]?.count || 1;
-                      return (
-                        <div key={country.country} className="flex items-center gap-4">
-                          <div className="flex-shrink-0 w-6 text-center text-sm text-muted-foreground">
-                            {index + 1}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm font-medium">{country.country}</span>
-                              <span className="text-sm text-muted-foreground">
-                                {country.count.toLocaleString()}
-                              </span>
+                    analyticsData.geographic_distribution.map(
+                      (country, index) => {
+                        const maxCount =
+                          analyticsData.geographic_distribution[0]?.count || 1;
+                        return (
+                          <div
+                            key={country.country}
+                            className="flex items-center gap-4"
+                          >
+                            <div className="flex-shrink-0 w-6 text-center text-sm text-muted-foreground">
+                              {index + 1}
                             </div>
-                            <div className="h-2 bg-muted rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-primary transition-all"
-                                style={{
-                                  width: `${(country.count / maxCount) * 100}%`,
-                                }}
-                              />
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-sm font-medium">
+                                  {country.country}
+                                </span>
+                                <span className="text-sm text-muted-foreground">
+                                  {country.count.toLocaleString()}
+                                </span>
+                              </div>
+                              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-primary transition-all"
+                                  style={{
+                                    width: `${
+                                      (country.count / maxCount) * 100
+                                    }%`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {country.percentage.toFixed(1)}%
                             </div>
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {country.percentage.toFixed(1)}%
-                          </div>
-                        </div>
-                      );
-                    })
+                        );
+                      }
+                    )
                   ) : (
                     <p className="text-sm text-muted-foreground text-center py-8">
                       No geographic data available

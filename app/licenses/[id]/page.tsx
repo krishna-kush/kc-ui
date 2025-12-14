@@ -8,33 +8,19 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { ArrowLeft, Download, Shield, Monitor, Activity, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, Shield, Monitor, Activity, Edit } from "lucide-react";
 import { toast } from "sonner";
 import { licenseApi, binaryApi } from "@/lib/api";
-import { useNotifications } from "@/contexts/NotificationContext";
 import { SortableTable, ColumnDef } from "@/components/sortable-table";
-import { EditLicenseDialog } from "@/components/edit-license-dialog";
+import { EditLicenseDialog } from "@/components/custom/licenses/edit-license-dialog";
+import { VerificationAttemptsTable } from "@/components/custom/common/verification-attempts-table";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  LicenseDownloadButton,
+  LicenseRevokeButton,
+  LicenseReEnableButton,
+  LicenseDeleteButton,
+} from "@/components/custom/licenses/actions";
 
 interface License {
   license_id: string;
@@ -55,7 +41,7 @@ interface BinaryInstance {
   machine_fingerprint: string;
   first_seen: string;
   last_seen: string;
-  status: 'active' | 'inactive' | 'unknown';
+  status: "active" | "inactive" | "unknown";
   total_checks: number;
   last_ip?: string;
 }
@@ -83,16 +69,11 @@ interface LicenseStats {
 export default function LicenseStatsPage() {
   const params = useParams();
   const router = useRouter();
-  const { addNotification } = useNotifications();
   const licenseId = params.id as string;
-  
+
   const [stats, setStats] = useState<LicenseStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
-  const [errorDialogContent, setErrorDialogContent] = useState({ title: "", description: "" });
 
   useEffect(() => {
     loadStats();
@@ -107,55 +88,6 @@ export default function LicenseStatsPage() {
       toast.error("Failed to load license stats");
     } finally {
       setLoading(false);
-    }
-  };
-
-
-
-  const handleDelete = async () => {
-    try {
-      setDeleting(true);
-      await licenseApi.delete(licenseId);
-      toast.success("License deleted successfully!");
-      
-      await addNotification({
-        title: "License Deleted",
-        message: "The license has been permanently deleted.",
-        type: "info",
-      });
-      
-      router.push("/licenses");
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to delete license");
-    } finally {
-      setDeleting(false);
-      setShowDeleteDialog(false);
-    }
-  };
-
-  const handleDownload = async () => {
-    if (!stats) return;
-    const toastId = toast.loading(`Preparing download...`);
-    try {
-      // This triggers browser's native download manager
-      await binaryApi.download(stats.license.binary_id, licenseId);
-
-      // Note: stats object doesn't currently have binary name, so we use generic message
-      // To fix this properly, the stats API response needs to include binary details
-      toast.success(`Download started`, { id: toastId });
-
-    } catch (error: any) {
-      console.error("Download error:", error);
-      if (error.message && (error.message.includes("Storage quota exceeded") || error.message.includes("not enough space"))) {
-        toast.dismiss(toastId);
-        setErrorDialogContent({
-          title: "Download Failed: Storage Quota Exceeded",
-          description: error.message
-        });
-        setErrorDialogOpen(true);
-      } else {
-        toast.error(error.message || "Failed to download", { id: toastId });
-      }
     }
   };
 
@@ -189,29 +121,46 @@ export default function LicenseStatsPage() {
                 </Button>
               }
               actions={
-                <>
+                <div className="flex items-center gap-2">
                   {stats && (
                     <>
-                      <Button onClick={() => setShowEditDialog(true)} size="sm" variant="outline">
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit Settings
-                      </Button>
+                      <LicenseDownloadButton
+                        binaryId={stats.license.binary_id}
+                        licenseId={licenseId}
+                        variant="button"
+                        disabled={stats.license.revoked}
+                      />
                       <Button
-                        onClick={() => setShowDeleteDialog(true)}
+                        onClick={() => setShowEditDialog(true)}
                         size="sm"
                         variant="outline"
-                        className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                        disabled={stats.license.revoked}
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete License
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
                       </Button>
+                      {!stats.license.revoked ? (
+                        <LicenseRevokeButton
+                          licenseId={licenseId}
+                          onSuccess={loadStats}
+                          variant="button"
+                        />
+                      ) : (
+                        <LicenseReEnableButton
+                          licenseId={licenseId}
+                          onSuccess={loadStats}
+                          variant="button"
+                        />
+                      )}
+                      <LicenseDeleteButton
+                        licenseId={licenseId}
+                        isRevoked={stats.license.revoked}
+                        onSuccess={() => router.push("/licenses")}
+                        variant="button"
+                      />
                     </>
                   )}
-                  <Button onClick={handleDownload} size="sm">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Binary
-                  </Button>
-                </>
+                </div>
               }
             />
 
@@ -229,35 +178,66 @@ export default function LicenseStatsPage() {
                   </CardHeader>
                   <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                      <div className="text-sm text-muted-foreground mb-1">Type</div>
-                      <Badge variant={stats.license.license_type === "patchable" ? "default" : "secondary"}>
+                      <div className="text-sm text-muted-foreground mb-1">
+                        Type
+                      </div>
+                      <Badge
+                        variant={
+                          stats.license.license_type === "patchable"
+                            ? "default"
+                            : "secondary"
+                        }
+                      >
                         {stats.license.license_type}
                       </Badge>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground mb-1">Mode</div>
-                      <Badge variant={stats.license.sync_mode ? "outline" : "secondary"}>
+                      <div className="text-sm text-muted-foreground mb-1">
+                        Mode
+                      </div>
+                      <Badge
+                        variant={
+                          stats.license.sync_mode ? "outline" : "secondary"
+                        }
+                      >
                         {stats.license.sync_mode ? "Sync" : "Async"}
                       </Badge>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground mb-1">Grace Period</div>
-                      <div className="font-medium">{stats.license.grace_period}s</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground mb-1">Kill Method</div>
-                      <div className="font-medium capitalize">{stats.license.kill_method}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground mb-1">Executions</div>
+                      <div className="text-sm text-muted-foreground mb-1">
+                        Grace Period
+                      </div>
                       <div className="font-medium">
-                        {stats.license.executions_used}
-                        {stats.license.max_executions && ` / ${stats.license.max_executions}`}
+                        {stats.license.grace_period}s
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground mb-1">Status</div>
-                      <Badge variant={stats.license.revoked ? "destructive" : "default"}>
+                      <div className="text-sm text-muted-foreground mb-1">
+                        Kill Method
+                      </div>
+                      <div className="font-medium capitalize">
+                        {stats.license.kill_method}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground mb-1">
+                        Executions
+                      </div>
+                      <div className="font-medium">
+                        {stats.license.executions_used}
+                        {stats.license.max_executions &&
+                          ` / ${stats.license.max_executions}`}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground mb-1">
+                        Status
+                      </div>
+                      <Badge
+                        variant={
+                          stats.license.revoked ? "destructive" : "default"
+                        }
+                      >
                         {stats.license.revoked ? "Revoked" : "Active"}
                       </Badge>
                     </div>
@@ -268,26 +248,42 @@ export default function LicenseStatsPage() {
                 <div className="grid md:grid-cols-4 gap-4">
                   <Card className="border-border/50 shadow-xl bg-card/50 backdrop-blur">
                     <CardContent className="pt-6">
-                      <div className="text-2xl font-bold">{stats.unique_computers}</div>
-                      <div className="text-sm text-muted-foreground">Total Computers</div>
+                      <div className="text-2xl font-bold">
+                        {stats.unique_computers}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Total Computers
+                      </div>
                     </CardContent>
                   </Card>
                   <Card className="border-border/50 shadow-xl bg-card/50 backdrop-blur">
                     <CardContent className="pt-6">
-                      <div className="text-2xl font-bold text-green-500">{stats.active_computers}</div>
-                      <div className="text-sm text-muted-foreground">Active</div>
+                      <div className="text-2xl font-bold text-green-500">
+                        {stats.active_computers}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Active
+                      </div>
                     </CardContent>
                   </Card>
                   <Card className="border-border/50 shadow-xl bg-card/50 backdrop-blur">
                     <CardContent className="pt-6">
-                      <div className="text-2xl font-bold text-red-500">{stats.inactive_computers}</div>
-                      <div className="text-sm text-muted-foreground">Inactive</div>
+                      <div className="text-2xl font-bold text-red-500">
+                        {stats.inactive_computers}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Inactive
+                      </div>
                     </CardContent>
                   </Card>
                   <Card className="border-border/50 shadow-xl bg-card/50 backdrop-blur">
                     <CardContent className="pt-6">
-                      <div className="text-2xl font-bold text-yellow-500">{stats.unknown_computers}</div>
-                      <div className="text-sm text-muted-foreground">Unknown</div>
+                      <div className="text-2xl font-bold text-yellow-500">
+                        {stats.unknown_computers}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Unknown
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -303,47 +299,71 @@ export default function LicenseStatsPage() {
                   <CardContent>
                     <SortableTable
                       data={stats.instances}
-                      columns={[
-                        {
-                          header: "Machine",
-                          accessorKey: "machine_fingerprint",
-                          cell: (row) => <span className="font-mono text-xs">{truncateFP(row.machine_fingerprint)}</span>
-                        },
-                        {
-                          header: "Status",
-                          accessorKey: "status",
-                          cell: (row) => (
-                            <Badge variant={
-                              row.status === 'active' ? 'default' : 
-                              row.status === 'inactive' ? 'destructive' : 
-                              'secondary'
-                            }>
-                              {row.status === 'active' ? '✓ Active' : 
-                               row.status === 'inactive' ? '✗ Inactive' : 
-                               '? Unknown'}
-                            </Badge>
-                          )
-                        },
-                        {
-                          header: "First Seen",
-                          accessorKey: "first_seen",
-                          cell: (row) => <span className="text-muted-foreground">{formatDate(row.first_seen)}</span>
-                        },
-                        {
-                          header: "Last Seen",
-                          accessorKey: "last_seen",
-                          cell: (row) => <span className="text-muted-foreground">{formatDate(row.last_seen)}</span>
-                        },
-                        {
-                          header: "Checks",
-                          accessorKey: "total_checks"
-                        },
-                        {
-                          header: "IP",
-                          accessorKey: "last_ip",
-                          cell: (row) => <span className="text-muted-foreground">{row.last_ip || "N/A"}</span>
-                        }
-                      ] as ColumnDef<BinaryInstance>[]}
+                      columns={
+                        [
+                          {
+                            header: "Machine",
+                            accessorKey: "machine_fingerprint",
+                            cell: (row) => (
+                              <span className="font-mono text-xs">
+                                {truncateFP(row.machine_fingerprint)}
+                              </span>
+                            ),
+                          },
+                          {
+                            header: "Status",
+                            accessorKey: "status",
+                            cell: (row) => (
+                              <Badge
+                                variant={
+                                  row.status === "active"
+                                    ? "default"
+                                    : row.status === "inactive"
+                                    ? "destructive"
+                                    : "secondary"
+                                }
+                              >
+                                {row.status === "active"
+                                  ? "✓ Active"
+                                  : row.status === "inactive"
+                                  ? "✗ Inactive"
+                                  : "? Unknown"}
+                              </Badge>
+                            ),
+                          },
+                          {
+                            header: "First Seen",
+                            accessorKey: "first_seen",
+                            cell: (row) => (
+                              <span className="text-muted-foreground">
+                                {formatDate(row.first_seen)}
+                              </span>
+                            ),
+                          },
+                          {
+                            header: "Last Seen",
+                            accessorKey: "last_seen",
+                            cell: (row) => (
+                              <span className="text-muted-foreground">
+                                {formatDate(row.last_seen)}
+                              </span>
+                            ),
+                          },
+                          {
+                            header: "Checks",
+                            accessorKey: "total_checks",
+                          },
+                          {
+                            header: "IP",
+                            accessorKey: "last_ip",
+                            cell: (row) => (
+                              <span className="text-muted-foreground">
+                                {row.last_ip || "N/A"}
+                              </span>
+                            ),
+                          },
+                        ] as ColumnDef<BinaryInstance>[]
+                      }
                       emptyMessage="No computer instances found"
                     />
                   </CardContent>
@@ -358,40 +378,13 @@ export default function LicenseStatsPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <SortableTable
-                      data={stats.recent_verifications}
-                      columns={[
-                        {
-                          header: "Time",
-                          accessorKey: "timestamp",
-                          cell: (row) => <span className="text-muted-foreground">{formatDate(row.timestamp)}</span>
-                        },
-                        {
-                          header: "Result",
-                          accessorKey: "success",
-                          cell: (row) => (
-                            <Badge variant={row.success ? "default" : "destructive"}>
-                              {row.success ? "Success" : "Failed"}
-                            </Badge>
-                          )
-                        },
-                        {
-                          header: "Machine",
-                          accessorKey: "machine_fingerprint",
-                          cell: (row) => <span className="font-mono text-xs">{truncateFP(row.machine_fingerprint)}</span>
-                        },
-                        {
-                          header: "IP",
-                          accessorKey: "ip_address",
-                          cell: (row) => <span className="text-muted-foreground">{row.ip_address}</span>
-                        },
-                        {
-                          header: "Reason",
-                          accessorKey: "error_message",
-                          cell: (row) => <span className="text-muted-foreground">{row.error_message || "-"}</span>
-                        }
-                      ] as ColumnDef<VerificationAttempt>[]}
-                      emptyMessage="No recent verifications found"
+                    <VerificationAttemptsTable
+                      attempts={stats.recent_verifications}
+                      loading={false}
+                      page={1}
+                      totalPages={1}
+                      onPageChange={() => {}}
+                      showLicenseId={false}
                     />
                   </CardContent>
                 </Card>
@@ -410,52 +403,6 @@ export default function LicenseStatsPage() {
             onOpenChange={setShowEditDialog}
             onSuccess={loadStats}
           />
-
-          {/* Delete License Confirmation Dialog */}
-          <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Delete License</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this license? This action cannot be undone.
-                  <br />
-                  <code className="text-xs bg-muted px-1 py-0.5 rounded mt-2 inline-block">
-                    {licenseId}
-                  </code>
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDeleteDialog(false)}
-                  disabled={deleting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleDelete}
-                  disabled={deleting}
-                >
-                  {deleting ? "Deleting..." : "Delete License"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle className="text-destructive">{errorDialogContent.title}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {errorDialogContent.description}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>OK</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
         </div>
       </NavigationLayout>
     </ProtectedRoute>

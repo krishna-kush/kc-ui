@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { NavigationLayout } from "@/components/navigation";
 import { ProtectedRoute } from "@/components/protected-route";
+import { ResourceList } from "@/components/custom/common/resource-list";
+import { SearchInput } from "@/components/custom/common/search-input";
 import { PageHeader } from "@/components/ui/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -19,11 +18,10 @@ import {
 } from "@/components/ui/table";
 import { binaryApi } from "@/lib/api";
 import { Binary } from "@/types";
-import { FileCode2, Download, Key, RefreshCw, Search, Trash2, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
+import { FileCode2, Key, RefreshCw, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useNotifications } from "@/contexts/NotificationContext";
 import { formatDistanceToNow } from "date-fns";
 import {
   Tooltip,
@@ -31,10 +29,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { BinaryDeleteButton } from "@/components/custom/binaries/actions";
 
 export default function BinariesPage() {
   const router = useRouter();
-  const { addNotification } = useNotifications();
   const [binaries, setBinaries] = useState<Binary[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -80,39 +78,9 @@ export default function BinariesPage() {
     };
 
     calculateItemsPerPage();
-    window.addEventListener('resize', calculateItemsPerPage);
-    return () => window.removeEventListener('resize', calculateItemsPerPage);
+    window.addEventListener("resize", calculateItemsPerPage);
+    return () => window.removeEventListener("resize", calculateItemsPerPage);
   }, []);
-
-    const handleDownload = async (binary: Binary) => {
-    const toastId = toast.loading(`Preparing download...`);
-    try {
-      // This triggers browser's native download manager
-      await binaryApi.download(binary.binary_id);
-      toast.success(`Download started: ${binary.original_name}`, { id: toastId });
-    } catch (error) {
-      toast.error("Failed to download binary", { id: toastId });
-    }
-  };
-
-  const handleDelete = async (binary: Binary) => {
-    if (!confirm(`Are you sure you want to delete ${binary.original_name}?`)) return;
-    
-    try {
-      await binaryApi.delete(binary.binary_id);
-      toast.success("Binary deleted successfully!");
-      
-      await addNotification({
-        title: "Binary Deleted",
-        message: `${binary.original_name} has been deleted.`,
-        type: "warning",
-      });
-      
-      fetchBinaries();
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to delete binary");
-    }
-  };
 
   useEffect(() => {
     fetchBinaries();
@@ -165,7 +133,12 @@ export default function BinariesPage() {
             }
             actions={
               <>
-                <Button onClick={fetchBinaries} variant="outline" size="sm" className="gap-2">
+                <Button
+                  onClick={fetchBinaries}
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                >
                   <RefreshCw className="h-4 w-4" />
                   Refresh
                 </Button>
@@ -179,169 +152,136 @@ export default function BinariesPage() {
             }
           />
 
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search binaries..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="max-w-sm"
-                />
-              </div>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="text-center py-8">
-                  <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-                  <p className="mt-2 text-sm text-muted-foreground">Loading binaries...</p>
-                </div>
-              ) : binaries.length === 0 ? (
-                <div className="text-center py-8">
-                  <FileCode2 className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-2 text-sm font-semibold">No binaries found</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {searchQuery ? "Try a different search term" : "Upload your first binary to get started"}
-                  </p>
-                  {!searchQuery && (
-                    <Link href="/upload">
-                      <Button className="mt-4" size="sm">
-                        Upload Binary
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead 
-                          className="cursor-pointer hover:bg-muted/50"
-                          onClick={() => toggleSort("name")}
-                        >
-                          Filename{getSortIcon("name")}
-                        </TableHead>
-                        <TableHead 
-                          className="cursor-pointer hover:bg-muted/50"
-                          onClick={() => toggleSort("size")}
-                        >
-                          Size{getSortIcon("size")}
-                        </TableHead>
-                        <TableHead 
-                          className="cursor-pointer hover:bg-muted/50"
-                          onClick={() => toggleSort("licenses")}
-                        >
-                          Total Licenses{getSortIcon("licenses")}
-                        </TableHead>
-                        <TableHead 
-                          className="cursor-pointer hover:bg-muted/50"
-                          onClick={() => toggleSort("created")}
-                        >
-                          Uploaded{getSortIcon("created")}
-                        </TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {binaries.map((binary) => (
-                      <TableRow 
-                        key={binary.binary_id}
-                        className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => router.push(`/files/binaries/${binary.binary_id}`)}
-                      >
-                        <TableCell className="font-medium">{binary.original_name}</TableCell>
-                        <TableCell>{formatBytes(binary.original_size)}</TableCell>
-                        <TableCell>
-                          <Badge variant="secondary">{binary.license_count || 0}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <span title={new Date(binary.created_at).toLocaleString()}>
-                            {formatDistanceToNow(new Date(binary.created_at), { addSuffix: true })}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                          <TooltipProvider>
-                            <div className="flex justify-end gap-2">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="outline" 
-                                    size="icon" 
-                                    className="h-8 w-8"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      router.push(`/files/binaries/${binary.binary_id}`);
-                                    }}
-                                  >
-                                    <Key className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Manage Licenses</p>
-                                </TooltipContent>
-                              </Tooltip>
-                              
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="outline" 
-                                    size="icon"
-                                    className="h-8 w-8 text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDelete(binary);
-                                    }}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Delete</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </div>
-                          </TooltipProvider>
-                        </TableCell>
-                      </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-between px-2 py-4">
-                    <p className="text-sm text-muted-foreground">
-                      Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, total)} of {total} binaries
-                    </p>
+          <ResourceList
+            title="Binaries"
+            totalItems={total}
+            icon={FileCode2}
+            loading={loading}
+            items={binaries}
+            searchControl={
+              <SearchInput
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder="Search binaries..."
+                className="max-w-sm"
+              />
+            }
+            emptyState={{
+              title: "No binaries found",
+              description: "Upload a binary to get started",
+              action: {
+                label: "Upload Binary",
+                onClick: () => router.push("/upload"),
+              },
+            }}
+            pagination={{
+              currentPage,
+              totalPages,
+              onPageChange: setCurrentPage,
+              itemsPerPage,
+              itemName: "binaries",
+            }}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => toggleSort("name")}
+                  >
+                    Filename{getSortIcon("name")}
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => toggleSort("size")}
+                  >
+                    Size{getSortIcon("size")}
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => toggleSort("licenses")}
+                  >
+                    Total Licenses{getSortIcon("licenses")}
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => toggleSort("created")}
+                  >
+                    Uploaded{getSortIcon("created")}
+                  </TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {binaries.map((binary) => (
+                  <TableRow
+                    key={binary.binary_id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() =>
+                      router.push(`/files/binaries/${binary.binary_id}`)
+                    }
+                  >
+                    <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                          disabled={currentPage === 1}
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                          Previous
-                        </Button>
-                        <span className="text-sm">
-                          Page {currentPage} of {totalPages}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                          disabled={currentPage === totalPages}
-                        >
-                          Next
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
+                        <FileCode2 className="h-4 w-4 text-muted-foreground" />
+                        {binary.original_name}
                       </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {formatBytes(binary.original_size)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">
+                        {binary.license_count || 0}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground">
+                        {formatDistanceToNow(new Date(binary.created_at), {
+                          addSuffix: true,
+                        })}
+                      </span>
+                    </TableCell>
+                    <TableCell
+                      className="text-right"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <TooltipProvider>
+                        <div className="flex justify-end gap-2">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  router.push(
+                                    `/files/binaries/${binary.binary_id}`
+                                  );
+                                }}
+                              >
+                                <Key className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Manage Licenses</p>
+                            </TooltipContent>
+                          </Tooltip>
+
+                          <BinaryDeleteButton
+                            binaryId={binary.binary_id}
+                            binaryName={binary.original_name}
+                            onSuccess={fetchBinaries}
+                          />
+                        </div>
+                      </TooltipProvider>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ResourceList>
         </div>
       </NavigationLayout>
     </ProtectedRoute>
