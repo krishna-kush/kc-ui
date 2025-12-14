@@ -9,6 +9,7 @@ import SupportSection from "@/components/custom/home/SupportSection";
 import HowItWorksSection from "@/components/custom/home/HowItWorksSection";
 import Footer from "@/components/custom/home/Footer";
 import { Loader } from "@/components/custom/common/loader";
+import PageGradientBackground from "@/components/custom/common/PageGradientBackground";
 
 export default function Home() {
   const { isAuthenticated, loading } = useAuth();
@@ -31,12 +32,14 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen">
-      <HeroSection />
-      <FeaturesSection />
-      <SupportSection />
-      <HowItWorksSection />
-      <Footer />
-    </div>
+    <PageGradientBackground>
+      <div className="min-h-screen">
+        <HeroSection />
+        <FeaturesSection />
+        <SupportSection />
+        <HowItWorksSection />
+        <Footer />
+      </div>
+    </PageGradientBackground>
   );
 }

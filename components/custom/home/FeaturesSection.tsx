@@ -121,7 +121,7 @@ export default function FeaturesSection() {
   );
 
   return (
-    <section className="bg-background py-20 overflow-hidden pt-32">
+    <section className="bg-transparent py-20 overflow-hidden pt-32">
       <div className="container mx-auto px-4">
         {/* Large screens: Two CardSwaps with centered text */}
         <div className="hidden lg:grid lg:grid-cols-3 gap-8 items-center">
@@ -177,7 +177,7 @@ export default function FeaturesSection() {
               Extended Protection
             </h2>
             <p className="text-muted-foreground text-lg xl:text-xl">
-              Everything you need to secure your software and monitor usage
+              Everything you need to secure your files and software with usage monitoring
             </p>
           </motion.div>
 
